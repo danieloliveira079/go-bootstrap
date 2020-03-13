@@ -18,6 +18,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/danieloliveira079/go-bootstrap/pkg/validators"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -32,19 +33,25 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		validator := new(validators.IntegerValidator)
-		valid, err := validator.Validate(1, 2)
+		log := logrus.New()
+		log.SetLevel(logrus.DebugLevel)
+		logger := logrus.NewEntry(log)
+		validator := validators.NewIntegerValidator(logger)
+
+		s := 1
+		t := 2
+		valid, err := validator.Validate(s, t)
 		if err != nil {
-			fmt.Println(err.Error())
+			logger.Error(err.Error())
 			return
 		}
 
 		if valid {
-			fmt.Sprintf("%d and %d are equal")
+			logger.Infof("%d and %d are equal", s, t)
 			return
 		}
 
-		fmt.Println("Something weird happaned")
+		fmt.Println("Something weird happened")
 	},
 }
 
